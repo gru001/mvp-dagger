@@ -1,0 +1,63 @@
+apply plugin: 'com.android.application'
+
+apply plugin: 'kotlin-android'
+
+apply plugin: 'kotlin-android-extensions'
+
+apply plugin: 'kotlin-kapt'
+
+android {
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    defaultConfig {
+        applicationId "com.example.pranit.mvp_dagger"
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+apply from:'dependencies.gradle'
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    // App dependency
+    implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation libraries.appcompat
+    implementation libraries.constraint_layout
+    implementation libraries.recyclerview
+    implementation libraries.retrofit_api
+    implementation libraries.espresso_idling
+    implementation libraries.retrofit_gson
+    implementation libraries.logging_interceptor
+    implementation libraries.gson
+    implementation libraries.dagger
+    kapt     libraries.daggerProcessor
+
+    // Dependencies for local unit tests
+    testImplementation libraries.junit
+    testImplementation libraries.hamcrest
+    testImplementation libraries.mockito
+    androidTestImplementation libraries.mockito_android
+
+    // Android Testing Support Library's runner and rules
+    androidTestImplementation libraries.test_rules
+    androidTestImplementation libraries.test_runner
+
+    // Resolve conflicts between main and test APK:
+    androidTestImplementation libraries.annotations
+    androidTestImplementation libraries.room_testing
+    androidTestImplementation libraries.espresso_idling_concurrent
+    androidTestImplementation libraries.retrofit_mock
+    androidTestImplementation libraries.mock_server, {
+        exclude group: 'com.squareup.okhttp3', module: 'okhttp'
+    }
+}
