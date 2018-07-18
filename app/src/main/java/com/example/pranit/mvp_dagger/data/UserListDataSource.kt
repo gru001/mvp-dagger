@@ -31,11 +31,11 @@ package com.example.pranit.mvp_dagger.data
 
 import com.example.pranit.mvp_dagger.api.UserApi
 import com.example.pranit.mvp_dagger.api.getAllUsers
-import com.example.pranit.mvp_dagger.model.User
+import com.example.pranit.mvp_dagger.model.UserResponse
 
 class UserListDataSource private constructor(private val service: UserApi){
 
-    fun getAllUsersPerPage(page : Int, onSuccess :(users:List<User>)-> Unit, onError : (error : String)->  Unit) {
+    fun getAllUsersPerPage(page : Int, onSuccess :(response : UserResponse?)-> Unit, onError : (error : String)->  Unit) {
         getAllUsers(service, page, onSuccess, onError)
     }
 

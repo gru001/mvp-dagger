@@ -37,6 +37,7 @@ import com.example.pranit.mvp_dagger.R
 import com.example.pranit.mvp_dagger.api.UserApi
 import com.example.pranit.mvp_dagger.data.UserListDataSource
 import com.example.pranit.mvp_dagger.model.User
+import com.example.pranit.mvp_dagger.model.UserResponse
 import com.example.pranit.mvp_dagger.uiutil.EndlessRecyclerViewAdapter
 
 class ListActivity : AppCompatActivity(), EndlessRecyclerViewAdapter.RequestToLoadMoreListener, UserListContract.View {
@@ -47,6 +48,8 @@ class ListActivity : AppCompatActivity(), EndlessRecyclerViewAdapter.RequestToLo
     private val userList: ArrayList<User> = ArrayList()
     private lateinit var endlessAdapter: EndlessRecyclerViewAdapter
     private lateinit var userAdapter: UserAdapter
+    private var currentPage: Int = 0
+    private var maxPage: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,27 +60,33 @@ class ListActivity : AppCompatActivity(), EndlessRecyclerViewAdapter.RequestToLo
         endlessAdapter = EndlessRecyclerViewAdapter(this,userAdapter,this)
         recyUserList.adapter = endlessAdapter
         presenter = UserListPresenter(UserListDataSource.getInstance(UserApi.create()), this)
+        presenter.start()
 
         if(!userList.isEmpty()){
             endlessAdapter.onDataReady(true)
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-        presenter.start()
-    }
-
     override fun onLoadMoreRequested() {
-        presenter.getAllUsersPerPage(1)
+        if(currentPage <= maxPage) {
+            currentPage++
+            presenter.getAllUsersPerPage(currentPage)
+        }
     }
 
-    override fun onSuccess(response: List<User>) {
-        userList.addAll(response)
-        userAdapter.notifyDataSetChanged()
+    override fun onSuccess(response: UserResponse?) {
+        currentPage = response?.page ?: 0
+        maxPage = response?.totalPages ?: 0
+        userAdapter.appendItems(response?.data as ArrayList<User>)
+        if (currentPage < maxPage) {
+            endlessAdapter.onDataReady(true)
+        }else {
+            endlessAdapter.onDataReady(false)
+        }
     }
 
     override fun onError(error: String) {
         Log.e(TAG, error)
+        endlessAdapter.onDataReady(false)
     }
 }

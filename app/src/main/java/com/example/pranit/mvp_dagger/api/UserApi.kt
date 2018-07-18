@@ -30,7 +30,6 @@
 package com.example.pranit.mvp_dagger.api
 
 import android.util.Log
-import com.example.pranit.mvp_dagger.model.User
 import com.example.pranit.mvp_dagger.model.UserResponse
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -44,7 +43,7 @@ import retrofit2.http.Query
 
 private const val TAG = "UserApi"
 
-fun getAllUsers(service : UserApi, page: Int, onSuccess :(users:List<User>)-> Unit, onError : (error : String)->  Unit) {
+fun getAllUsers(service : UserApi, page: Int, onSuccess :(response:UserResponse?)-> Unit, onError : (error : String)->  Unit) {
 
     service.getAllUsers(page).enqueue(object :Callback<UserResponse> {
         override fun onFailure(call: Call<UserResponse>?, t: Throwable?) {
@@ -55,7 +54,7 @@ fun getAllUsers(service : UserApi, page: Int, onSuccess :(users:List<User>)-> Un
         override fun onResponse(call: Call<UserResponse>?, response: Response<UserResponse>?) {
             Log.d(TAG, "got a response $response")
             if (response!!.isSuccessful) {
-                val repos = response?.body()?.data ?: emptyList()
+                val repos = response?.body()
                 onSuccess(repos)
             } else {
                 onError(response?.errorBody()?.string() ?: "Unknown error")

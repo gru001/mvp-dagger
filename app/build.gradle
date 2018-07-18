@@ -40,6 +40,8 @@ dependencies {
     implementation libraries.logging_interceptor
     implementation libraries.gson
     implementation libraries.dagger
+    implementation libraries.glide
+    kapt libraries.glideComp
     kapt     libraries.daggerProcessor
 
     // Dependencies for local unit tests
@@ -59,5 +61,8 @@ dependencies {
     androidTestImplementation libraries.retrofit_mock
     androidTestImplementation libraries.mock_server, {
         exclude group: 'com.squareup.okhttp3', module: 'okhttp'
+    }
+    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
     }
 }
